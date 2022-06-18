@@ -1,10 +1,10 @@
 package controller;
 
-import model.Customer;
-import service.ICustomerService;
-import service.IFindAllService;
-import service.impl.CustomerService;
-import service.impl.CustomerTypeService;
+import dto.ContractCreateResponseDto;
+import model.Contract;
+import service.IContractService;
+import service.impl.ContractService;
+import util.LocalDateTimeUtil;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,19 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalDate;
 
-@WebServlet(name = "CustomerController", value = "/customer")
-public class CustomerController extends HttpServlet {
+@WebServlet(name = "ContractController", value = "/contract")
+public class ContractController extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private ICustomerService customerService;
-    private IFindAllService customerTypeService;
+    private IContractService contractService;
 
     public void init() {
-        customerService = new CustomerService();
-        customerTypeService = new CustomerTypeService();
+        contractService = new ContractService();
     }
-
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -47,7 +43,7 @@ public class CustomerController extends HttpServlet {
 //                    deleteUser(request, response);
 //                    break;
                 default:
-                    list(request, response);
+//                    list(request, response);
                     break;
             }
         } catch (SQLException ex) {
@@ -55,17 +51,17 @@ public class CustomerController extends HttpServlet {
         }
     }
 
-    private void list(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException, ServletException {
-        request.setAttribute("customerList", customerService.findAllListDto());
-        RequestDispatcher dispatcher = request.getRequestDispatcher("customer/list.jsp");
-        dispatcher.forward(request, response);
-    }
-
     private void showCreate(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("customer/create.jsp");
-        request.setAttribute("customerTypeList", customerTypeService.findAll());
+        RequestDispatcher dispatcher = request.getRequestDispatcher("contract/create.jsp");
+
+        ContractCreateResponseDto contractCreateResponseDto = ContractCreateResponseDto.builder()
+                .employeeIdList(contractService.findAllEmployeeId())
+                .customerIdList(contractService.findAllCustomerId())
+                .serviceIdCodeDtoList(contractService.findAllServiceIdCode())
+                .build();
+
+        request.setAttribute("contractCreateResponseDto", contractCreateResponseDto);
         dispatcher.forward(request, response);
     }
 
@@ -94,19 +90,17 @@ public class CustomerController extends HttpServlet {
         response.setContentType("text/html; charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        Customer customer = Customer.builder()
-                .customerCode(request.getParameter("customer_code"))
-                .customerTypeId(Integer.parseInt(request.getParameter("customer_type_id")))
-                .customerName(request.getParameter("customer_name"))
-                .customerBirthday(LocalDate.parse(request.getParameter("customer_birthday")))
-                .customerGender(Boolean.parseBoolean(request.getParameter("customer_gender")))
-                .customerIdCard(request.getParameter("customer_id_card"))
-                .customerPhone(request.getParameter("customer_phone"))
-                .customerEmail(request.getParameter("customer_email"))
-                .customerAddress(request.getParameter("customer_address"))
+        Contract contract = Contract.builder()
+                .contractStartDate(LocalDateTimeUtil.parseDateTime(request.getParameter("contract_start_date")))
+                .contractEndDate(LocalDateTimeUtil.parseDateTime(request.getParameter("contract_end_date")))
+                .contractDeposit(Double.parseDouble(request.getParameter("contract_deposit")))
+                .contractTotalMoney(Double.parseDouble(request.getParameter("contract_total_money")))
+                .employeeId(Integer.parseInt(request.getParameter("employee_id")))
+                .customerId(Integer.parseInt(request.getParameter("customer_id")))
+                .serviceId(Integer.parseInt(request.getParameter("service_id")))
                 .build();
 
-        customerService.create(customer);
+        contractService.create(contract);
 
         response.sendRedirect("customer");
     }

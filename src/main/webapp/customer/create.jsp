@@ -1,4 +1,6 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8" %>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,10 +45,10 @@
             <label class="col-sm-2 col-form-label">Gender</label>
             <div class="col-sm-10">
                 <label for="male" class="form-check-label">Male</label>
-                <input type="radio" name="customer_gender" value="1" id="male" class="form-check-input">
+                <input type="radio" name="customer_gender" value="true" id="male" class="form-check-input">
 
                 <label for="female" class=" form-check-label" style="margin-left: 50px">Female</label>
-                <input type="radio" name="customer_gender" value="" id="female" class="form-check-input">
+                <input type="radio" name="customer_gender" value="false" id="female" class="form-check-input">
             </div>
         </div>
 
@@ -75,13 +77,13 @@
             <label for="customer_type_id" class="col-sm-2 col-form-label">Customer Type</label>
             <div class="col-sm-10">
                 <select name="customer_type_id" class="form-select" id="customer_type_id">
-                    <c:forEach var="customerType"  items="${customerTypeList}">
+                    <c:forEach var="customerType" items="${customerTypeList}">
                         <option value="${customerType.customerTypeId}">${customerType.customerTypeName}</option>
                     </c:forEach>
-<%--                    <option selected>Open this select menu</option>--%>
-<%--                    <option value="1">One</option>--%>
-<%--                    <option value="2">Two</option>--%>
-<%--                    <option value="3">Three</option>--%>
+                    <%--                    <option selected>Open this select menu</option>--%>
+                    <%--                    <option value="1">One</option>--%>
+                    <%--                    <option value="2">Two</option>--%>
+                    <%--                    <option value="3">Three</option>--%>
                 </select>
             </div>
         </div>
